@@ -29,4 +29,4 @@ table:
         operation: append
         added-data-files: 2
         added-records: 1000
-      manifest-list: s3://warehouse/db/events/metadata/snap-3051729675574597004.avro
+      manifest-list: s3://warehouse/db/events/metadata/snap-3051729675574597004.toon

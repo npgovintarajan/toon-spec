@@ -944,7 +944,28 @@ snapshot:
     operation: append
     added-data-files: 2
     added-records: 1000
-  manifest-list: s3://bucket/metadata/snap-3051729675574597004.avro
+  manifest-list: s3://bucket/metadata/snap-3051729675574597004.toon
+```
+
+Manifest List in TOON Format:
+
+```
+manifest-list:
+  snapshot-id: 3051729675574597004
+  manifests[2]{manifest-path,manifest-length,partition-spec-id,added-files-count,added-rows-count}:
+    s3://bucket/metadata/manifest-001.toon,4096,0,1,500
+    s3://bucket/metadata/manifest-002.toon,4096,0,1,500
+```
+
+Manifest File in TOON Format:
+
+```
+manifest:
+  schema-id: 1
+  partition-spec-id: 0
+  entries[2]{status,data-file-path,file-format,record-count,file-size-bytes,partition-data}:
+    ADDED,s3://bucket/data/part-00001.parquet,PARQUET,500,12345,event_day=2024-01-31
+    ADDED,s3://bucket/data/part-00002.parquet,PARQUET,500,12346,event_day=2024-01-31
 ```
 
 #### Multi-Read-Write Support for Multi-Cloud Lakehouse
