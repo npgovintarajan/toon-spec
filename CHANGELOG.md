@@ -5,6 +5,19 @@ All notable changes to the TOON specification will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Added §17.4 Apache Iceberg Interoperability documentation:
+  - REST Data Catalog support with namespace, table schema, and snapshot metadata examples
+  - Multi-read-write support for multi-cloud lakehouse architectures
+  - Cross-cloud storage location representation
+  - Catalog federation for distributed queries
+  - Type mappings between Iceberg and TOON
+  - Transaction isolation and content-addressable storage considerations
+- Added example files for Iceberg-style data (`iceberg-table-metadata.toon`, `iceberg-rest-catalog.toon`)
+
 ## [3.0] - 2025-11-24
 
 ### Breaking Changes

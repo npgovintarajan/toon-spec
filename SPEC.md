@@ -889,6 +889,138 @@ server:
   tags[2]: web,api
 ```
 
+### 17.4 Apache Iceberg Interoperability
+
+TOON can efficiently represent Apache Iceberg metadata structures, supporting REST Data Catalog operations and multi-cloud lakehouse architectures.
+
+#### REST Data Catalog Support
+
+Apache Iceberg's REST Catalog API [Iceberg REST] uses JSON for catalog operations. TOON provides a compact alternative for representing catalog metadata, table schemas, and partition specifications.
+
+**[Iceberg REST]** Apache Software Foundation, "Iceberg REST Catalog Specification", 2024.
+https://iceberg.apache.org/docs/latest/rest-api/
+
+Catalog Namespace Representation:
+
+```
+namespace:
+  name: analytics
+  properties:
+    location: s3://data-lake/analytics
+    owner: data-team
+```
+
+Table Schema in TOON:
+
+```
+table:
+  name: events
+  schema:
+    schema-id: 1
+    fields[4]{id,name,type,required}:
+      1,event_id,string,true
+      2,timestamp,timestamptz,true
+      3,user_id,long,false
+      4,payload,string,false
+  partition-spec:
+    spec-id: 0
+    fields[1]{source-id,field-id,name,transform}:
+      2,1000,event_day,day
+  sort-order:
+    order-id: 0
+    fields[1]{source-id,direction,null-order}:
+      2,asc,nulls-first
+```
+
+Snapshot Metadata:
+
+```
+snapshot:
+  snapshot-id: 3051729675574597004
+  parent-snapshot-id: null
+  sequence-number: 1
+  timestamp-ms: 1706716800000
+  summary:
+    operation: append
+    added-data-files: 1
+    added-records: 1000
+  manifest-list: s3://bucket/metadata/snap-3051729675574597004.avro
+```
+
+#### Multi-Read-Write Support for Multi-Cloud Lakehouse
+
+TOON's deterministic serialization and explicit array lengths support Iceberg's optimistic concurrency control patterns for multi-cloud deployments.
+
+Commit Metadata for Concurrent Operations:
+
+```
+commit:
+  table-uuid: 9c12d441-03fe-4693-9a96-a0705ddf69c1
+  base-snapshot-id: 3051729675574597004
+  sequence-number: 2
+  operations[2]:
+    - type: append
+      data-files[2]{file-path,file-format,record-count,file-size-in-bytes}:
+        s3://bucket/data/part-00001.parquet,PARQUET,500,12345
+        s3://bucket/data/part-00002.parquet,PARQUET,500,12346
+    - type: delete
+      delete-files[1]{file-path,content,record-count}:
+        s3://bucket/data/del-00001.parquet,POSITION_DELETES,10
+```
+
+Multi-Cloud Storage Locations:
+
+TOON can represent cross-cloud table configurations:
+
+```
+table-locations:
+  name: customer_events
+  primary:
+    provider: aws
+    location: s3://primary-bucket/events
+    region: us-east-1
+  replicas[2]{provider,location,region,sync-mode}:
+    gcp,gs://replica-bucket/events,us-central1,async
+    azure,abfs://container@account.dfs.core.windows.net/events,eastus,async
+  access-policies[2]{principal,actions}:
+    analytics-team,"read,write"
+    reporting-service,read
+```
+
+Catalog Federation:
+
+For federated catalog queries across cloud providers:
+
+```
+federated-query:
+  catalogs[3]{name,type,uri}:
+    aws-prod,rest,https://aws-catalog.example.com
+    gcp-analytics,rest,https://gcp-catalog.example.com
+    azure-warehouse,rest,https://azure-catalog.example.com
+  query:
+    type: list-tables
+    namespace: production.events
+```
+
+#### Interoperability Considerations
+
+Type Mappings:
+- Iceberg `timestamptz` → ISO 8601 string in TOON
+- Iceberg `uuid` → string representation
+- Iceberg `binary` → base64-encoded string (application-defined)
+- Iceberg `fixed(N)` → base64-encoded string with documented length
+- Iceberg `decimal(P,S)` → numeric string for lossless precision
+
+Transaction Isolation:
+- TOON's deterministic output enables content-addressable storage for metadata
+- Explicit array lengths allow validation of partial writes and truncation detection
+- Snapshot isolation can reference TOON-encoded metadata by content hash
+
+Multi-Cloud Benefits:
+- Cloud-agnostic serialization (UTF-8 text, no binary formats)
+- Compact representation reduces cross-cloud transfer costs
+- Human-readable for debugging distributed operations
+
 ## 18. IANA Considerations
 
 ### 18.1 Media Type Registration

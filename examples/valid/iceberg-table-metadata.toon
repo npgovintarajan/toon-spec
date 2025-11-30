@@ -1,0 +1,32 @@
+table:
+  format-version: 2
+  table-uuid: 9c12d441-03fe-4693-9a96-a0705ddf69c1
+  location: s3://warehouse/db/events
+  last-updated-ms: 1706716800000
+  last-column-id: 4
+  schema:
+    schema-id: 1
+    fields[4]{id,name,type,required}:
+      1,event_id,string,true
+      2,timestamp,timestamptz,true
+      3,user_id,long,false
+      4,payload,string,false
+  partition-spec:
+    spec-id: 0
+    fields[1]{source-id,field-id,name,transform}:
+      2,1000,event_day,day
+  sort-order:
+    order-id: 0
+    fields[1]{source-id,direction,null-order}:
+      2,asc,nulls-first
+  current-snapshot-id: 3051729675574597004
+  snapshots[1]:
+    - snapshot-id: 3051729675574597004
+      parent-snapshot-id: null
+      sequence-number: 1
+      timestamp-ms: 1706716800000
+      summary:
+        operation: append
+        added-data-files: 2
+        added-records: 1000
+      manifest-list: s3://warehouse/db/events/metadata/snap-3051729675574597004.avro

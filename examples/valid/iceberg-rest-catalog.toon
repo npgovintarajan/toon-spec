@@ -1,0 +1,13 @@
+catalogs[3]{name,type,uri,warehouse}:
+  aws-production,rest,https://catalog.aws.example.com,s3://prod-warehouse
+  gcp-analytics,rest,https://catalog.gcp.example.com,gs://analytics-warehouse
+  azure-reporting,rest,https://catalog.azure.example.com,abfs://warehouse@storage.dfs.core.windows.net
+namespaces[2]:
+  - name[2]: production,events
+    properties:
+      owner: data-team
+      location: s3://prod-warehouse/production/events
+  - name[2]: production,users
+    properties:
+      owner: platform-team
+      location: s3://prod-warehouse/production/users
