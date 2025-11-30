@@ -942,7 +942,7 @@ snapshot:
   timestamp-ms: 1706716800000
   summary:
     operation: append
-    added-data-files: 1
+    added-data-files: 2
     added-records: 1000
   manifest-list: s3://bucket/metadata/snap-3051729675574597004.avro
 ```
